@@ -7,7 +7,6 @@ services:
   # API Service
   - type: web
     name: alphapath-api
-    runtime: docker
     plan: free
     buildCommand: npm install && npm run build && npm run migrate
     startCommand: npm start
