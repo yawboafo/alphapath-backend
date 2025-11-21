@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { AuthRequest, ApiResponse } from '../types/express';
-import userService from '../services/userService';
+import UserService from '../services/userService';
 import { asyncHandler } from '../middleware/errorHandler';
 
 export class UserController {
@@ -10,7 +10,7 @@ export class UserController {
     const pageNum = parseInt(page as string, 10);
     const limitNum = parseInt(limit as string, 10);
 
-    const result = await userService.getAllUsers({
+    const result = await UserService.getAllUsers({
       page: pageNum,
       limit: limitNum,
       search: search as string,
@@ -27,7 +27,7 @@ export class UserController {
 
   getUserById = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
-    const user = await userService.getUserById(id);
+    const user = await UserService.getUserById(id);
 
     const response: ApiResponse = {
       success: true,
@@ -39,7 +39,7 @@ export class UserController {
 
   updateUser = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
-    const user = await userService.updateUser(id, req.body);
+    const user = await UserService.updateUser(id, req.body);
 
     const response: ApiResponse = {
       success: true,
@@ -52,7 +52,7 @@ export class UserController {
 
   deleteUser = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
-    await userService.deleteUser(id);
+    await UserService.deleteUser(id);
 
     const response: ApiResponse = {
       success: true,
@@ -70,7 +70,7 @@ export class UserController {
       });
     }
 
-    const stats = await userService.getUserStats(req.user.id);
+    const stats = await UserService.getUserStats(req.user.id);
 
     const response: ApiResponse = {
       success: true,
