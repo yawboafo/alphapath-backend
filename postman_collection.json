@@ -1,0 +1,732 @@
+{
+  "info": {
+    "name": "AlphaPath Academy API",
+    "description": "Complete API collection for AlphaPath Academy Backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set('access_token', response.data.accessToken);",
+                  "    pm.environment.set('refresh_token', response.data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"Test1234\",\n  \"fullName\": \"Test User\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set('access_token', response.data.accessToken);",
+                  "    pm.environment.set('refresh_token', response.data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"Test1234\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Updated Name\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Courses",
+      "item": [
+        {
+          "name": "List All Courses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/courses",
+              "host": ["{{base_url}}"],
+              "path": ["api", "courses"]
+            }
+          }
+        },
+        {
+          "name": "List Courses by Category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/courses?category=tech",
+              "host": ["{{base_url}}"],
+              "path": ["api", "courses"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "tech"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Course Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/courses/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "courses", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "course_id_here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Course Lessons",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/courses/:id/lessons",
+              "host": ["{{base_url}}"],
+              "path": ["api", "courses", ":id", "lessons"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "course_id_here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Enroll in Course",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/courses/:id/enroll",
+              "host": ["{{base_url}}"],
+              "path": ["api", "courses", ":id", "enroll"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "course_id_here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get My Courses",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/courses/my-courses",
+              "host": ["{{base_url}}"],
+              "path": ["api", "courses", "my-courses"]
+            }
+          }
+        },
+        {
+          "name": "Get Course Progress",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/courses/:id/progress",
+              "host": ["{{base_url}}"],
+              "path": ["api", "courses", ":id", "progress"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "course_id_here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Lesson Progress",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"progressPercentage\": 75,\n  \"completed\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/courses/lessons/:id/progress",
+              "host": ["{{base_url}}"],
+              "path": ["api", "courses", "lessons", ":id", "progress"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "lesson_id_here"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Community",
+      "item": [
+        {
+          "name": "List All Posts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/community/posts",
+              "host": ["{{base_url}}"],
+              "path": ["api", "community", "posts"]
+            }
+          }
+        },
+        {
+          "name": "List Posts by Category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/community/posts?category=tech",
+              "host": ["{{base_url}}"],
+              "path": ["api", "community", "posts"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "tech"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Post Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/community/posts/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "community", "posts", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "post_id_here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Post",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": \"tech\",\n  \"title\": \"My Learning Journey\",\n  \"content\": \"Today I learned about Node.js and TypeScript...\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/community/posts",
+              "host": ["{{base_url}}"],
+              "path": ["api", "community", "posts"]
+            }
+          }
+        },
+        {
+          "name": "Like/Unlike Post",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/community/posts/:id/like",
+              "host": ["{{base_url}}"],
+              "path": ["api", "community", "posts", ":id", "like"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "post_id_here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Post Comments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/community/posts/:id/comments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "community", "posts", ":id", "comments"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "post_id_here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Add Comment",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Great post! Thanks for sharing.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/community/posts/:id/comments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "community", "posts", ":id", "comments"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "post_id_here"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Create Stripe Payment Intent",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 49.99,\n  \"currency\": \"usd\",\n  \"courseId\": \"course_id_here\",\n  \"metadata\": {\n    \"courseName\": \"Alpha Mindset Mastery\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments/stripe/create-intent",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "stripe", "create-intent"]
+            }
+          }
+        },
+        {
+          "name": "Initialize Paystack Payment",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 200.00,\n  \"courseId\": \"course_id_here\",\n  \"metadata\": {\n    \"courseName\": \"Tech Career Growth\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments/paystack/initialize",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "paystack", "initialize"]
+            }
+          }
+        },
+        {
+          "name": "Verify Paystack Payment",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/payments/paystack/verify/:reference",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "paystack", "verify", ":reference"],
+              "variable": [
+                {
+                  "key": "reference",
+                  "value": "payment_reference_here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Subscription",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planId\": \"plan_id_here\",\n  \"tier\": \"premium\",\n  \"paymentMethod\": \"stripe\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments/subscriptions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "subscriptions"]
+            }
+          }
+        },
+        {
+          "name": "Get User Subscriptions",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/payments/subscriptions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "subscriptions"]
+            }
+          }
+        },
+        {
+          "name": "Cancel Subscription",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/payments/subscriptions/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "subscriptions", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "subscription_id_here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Purchase History",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/payments/purchases",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "purchases"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
