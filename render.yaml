@@ -1,12 +1,11 @@
-services:
-  # PostgreSQL Database
-  - type: pserv
-    name: alphapath-db
+databases:
+  - name: alphapath-db
     plan: free
 
-  # API Service
+services:
   - type: web
     name: alphapath-api
+    runtime: node
     plan: free
     buildCommand: npm install && npm run build && npm run migrate
     startCommand: npm start
