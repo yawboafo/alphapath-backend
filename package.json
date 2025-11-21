@@ -8,6 +8,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "migrate": "node dist/migrations/migrate.js",
+    "make-admin": "ts-node src/scripts/makeAdmin.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint src --ext .ts",
