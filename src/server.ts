@@ -12,6 +12,8 @@ import authRoutes from './routes/auth.routes';
 import courseRoutes from './routes/course.routes';
 import communityRoutes from './routes/community.routes';
 import paymentRoutes from './routes/payment.routes';
+import userRoutes from './routes/user.routes';
+import statsRoutes from './routes/stats.routes';
 
 class Server {
   public app: Application;
@@ -82,6 +84,8 @@ class Server {
     this.app.use('/api/courses', courseRoutes);
     this.app.use('/api/community', communityRoutes);
     this.app.use('/api/payments', paymentRoutes);
+    this.app.use('/api/users', userRoutes);
+    this.app.use('/api/stats', statsRoutes);
 
     // Root endpoint
     this.app.get('/', (_req, res) => {
