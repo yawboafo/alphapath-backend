@@ -2,10 +2,8 @@ services:
   # PostgreSQL Database
   - type: pserv
     name: alphapath-db
-    runtime: docker
     plan: free
     region: oregon
-    ipAllowList: []
 
   # API Service
   - type: web
