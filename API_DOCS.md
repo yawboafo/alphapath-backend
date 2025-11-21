@@ -2,6 +2,18 @@
 
 **Base URL:** `https://alphapath-api.onrender.com`
 
+## Access Levels Legend
+
+Each endpoint is labeled with its required access level:
+
+- 🌐 **Public** - No authentication required
+- 👤 **User** - Requires authentication (any logged-in user)
+- 🎓 **Instructor** - Requires authentication (course instructor/owner only)
+- 🔐 **Admin** - Requires authentication with admin role
+- ⚙️ **System** - System-only endpoints (webhooks, internal)
+
+---
+
 ## Table of Contents
 - [Authentication](#authentication)
 - [Users Management](#users-management)
@@ -17,10 +29,12 @@
 
 ## Authentication
 
-### Register User
+### Register User 🌐 Public
 **POST** `/api/auth/register`
 
 Create a new user account.
+
+**Access Level:** Public (no authentication required)
 
 **Request Body:**
 ```json
@@ -53,10 +67,12 @@ Create a new user account.
 
 ---
 
-### Login
+### Login 🌐 Public
 **POST** `/api/auth/login`
 
 Authenticate a user and get tokens.
+
+**Access Level:** Public (no authentication required)
 
 **Request Body:**
 ```json
@@ -88,10 +104,12 @@ Authenticate a user and get tokens.
 
 ---
 
-### Refresh Token
+### Refresh Token 🌐 Public
 **POST** `/api/auth/refresh`
 
 Get a new access token using refresh token.
+
+**Access Level:** Public (no authentication required)
 
 **Request Body:**
 ```json
@@ -143,10 +161,12 @@ Authorization: Bearer <accessToken>
 
 ## Users Management
 
-### Get All Users (Admin Only)
+### Get All Users 🔐 Admin Only
 **GET** `/api/users`
 
 Get paginated list of all users with optional search and filtering.
+
+**Access Level:** Admin Only (requires admin role)
 
 **Headers:**
 ```
@@ -184,10 +204,12 @@ Authorization: Bearer <admin_access_token>
 
 ---
 
-### Get User by ID (Admin Only)
+### Get User by ID 🔐 Admin Only
 **GET** `/api/users/:id`
 
 Get detailed information about a specific user.
+
+**Access Level:** Admin Only (requires admin role)
 
 **Headers:**
 ```
@@ -214,10 +236,12 @@ Authorization: Bearer <admin_access_token>
 
 ---
 
-### Update User (Admin Only)
+### Update User 🔐 Admin Only
 **PUT** `/api/users/:id`
 
 Update user information.
+
+**Access Level:** Admin Only (requires admin role)
 
 **Headers:**
 ```
@@ -252,10 +276,12 @@ Authorization: Bearer <admin_access_token>
 
 ---
 
-### Delete User (Admin Only)
+### Delete User 🔐 Admin Only
 **DELETE** `/api/users/:id`
 
 Delete a user account and all associated data.
+
+**Access Level:** Admin Only (requires admin role)
 
 **Headers:**
 ```
@@ -272,10 +298,12 @@ Authorization: Bearer <admin_access_token>
 
 ---
 
-### Get User Statistics
+### Get User Statistics 👤 User
 **GET** `/api/users/stats`
 
 Get statistics for the authenticated user.
+
+**Access Level:** Authenticated User
 
 **Headers:**
 ```
@@ -299,10 +327,12 @@ Authorization: Bearer <access_token>
 
 ## Dashboard Statistics
 
-### Get Dashboard Overview (Admin Only)
+### Get Dashboard Overview 🔐 Admin Only
 **GET** `/api/stats/dashboard`
 
 Get overview statistics for admin dashboard.
+
+**Access Level:** Admin Only (requires admin role)
 
 **Headers:**
 ```
@@ -325,10 +355,12 @@ Authorization: Bearer <admin_access_token>
 
 ---
 
-### Get Recent Enrollments (Admin Only)
+### Get Recent Enrollments 🔐 Admin Only
 **GET** `/api/stats/recent-enrollments`
 
 Get recent course enrollments.
+
+**Access Level:** Admin Only (requires admin role)
 
 **Headers:**
 ```
@@ -355,10 +387,12 @@ Authorization: Bearer <admin_access_token>
 
 ---
 
-### Get Top Courses (Admin Only)
+### Get Top Courses 🔐 Admin Only
 **GET** `/api/stats/top-courses`
 
 Get top performing courses by enrollment count.
+
+**Access Level:** Admin Only (requires admin role)
 
 **Headers:**
 ```
@@ -387,10 +421,12 @@ Authorization: Bearer <admin_access_token>
 
 ## Courses
 
-### Get All Courses
+### Get All Courses 🌐 Public
 **GET** `/api/courses`
 
 Retrieve all published courses with optional filters.
+
+**Access Level:** Public (no authentication required)
 
 **Query Parameters:**
 - `category` (optional): Filter by category (`alpha`, `tech`, `life`, `mentorship`)
@@ -431,10 +467,12 @@ GET /api/courses?category=tech&maxPrice=100
 
 ---
 
-### Get Course by ID
+### Get Course by ID 🌐 Public
 **GET** `/api/courses/:id`
 
 Get details of a specific course.
+
+**Access Level:** Public (no authentication required)
 
 **Response (200):**
 ```json
@@ -463,10 +501,12 @@ Get details of a specific course.
 
 ---
 
-### Create Course
+### Create Course 🎓 Instructor
 **POST** `/api/courses`
 
-Create a new course (requires authentication).
+Create a new course.
+
+**Access Level:** Authenticated User (Instructor)
 
 **Headers:**
 ```
@@ -618,10 +658,12 @@ Authorization: Bearer <accessToken>
 
 ---
 
-### Enroll in Course
+### Enroll in Course 👤 User
 **POST** `/api/courses/:id/enroll`
 
 Enroll the authenticated user in a course.
+
+**Access Level:** Authenticated User
 
 **Headers:**
 ```
@@ -638,10 +680,12 @@ Authorization: Bearer <accessToken>
 
 ---
 
-### Get My Courses
+### Get My Courses 👤 User
 **GET** `/api/courses/my-courses`
 
 Get all courses the authenticated user is enrolled in.
+
+**Access Level:** Authenticated User
 
 **Headers:**
 ```
@@ -715,10 +759,12 @@ Authorization: Bearer <accessToken>
 
 ---
 
-### Update Lesson Progress
+### Update Lesson Progress 👤 User
 **POST** `/api/courses/lessons/:id/progress`
 
 Update progress for a specific lesson.
+
+**Access Level:** Authenticated User
 
 **Headers:**
 ```
@@ -746,10 +792,12 @@ Content-Type: application/json
 
 ## Course Sections
 
-### Get Course Sections
+### Get Course Sections 👤 User
 **GET** `/api/courses/:courseId/sections`
 
 Get all sections for a course.
+
+**Access Level:** Authenticated User
 
 **Headers:**
 ```
@@ -775,10 +823,12 @@ Authorization: Bearer <access_token>
 
 ---
 
-### Create Course Section
+### Create Course Section 🎓 Instructor
 **POST** `/api/courses/:courseId/sections`
 
-Create a new section (instructor only).
+Create a new section.
+
+**Access Level:** Instructor (course owner only)
 
 **Headers:**
 ```
@@ -811,10 +861,12 @@ Authorization: Bearer <access_token>
 
 ---
 
-### Update Course Section
+### Update Course Section 🎓 Instructor
 **PUT** `/api/sections/:sectionId`
 
-Update a section (instructor only).
+Update a section.
+
+**Access Level:** Instructor (course owner only)
 
 **Headers:**
 ```
@@ -847,10 +899,12 @@ Authorization: Bearer <access_token>
 
 ---
 
-### Delete Course Section
+### Delete Course Section 🎓 Instructor
 **DELETE** `/api/sections/:sectionId`
 
-Delete a section (instructor only).
+Delete a section.
+
+**Access Level:** Instructor (course owner only)
 
 **Headers:**
 ```
@@ -869,10 +923,12 @@ Authorization: Bearer <access_token>
 
 ## Reviews
 
-### Get Course Reviews
+### Get Course Reviews 🌐 Public
 **GET** `/api/courses/:courseId/reviews`
 
 Get all reviews for a course with pagination.
+
+**Access Level:** Public (no authentication required)
 
 **Query Parameters:**
 - `page` (number, default: 1) - Page number
@@ -906,10 +962,12 @@ Get all reviews for a course with pagination.
 
 ---
 
-### Get Review Statistics
+### Get Review Statistics 🌐 Public
 **GET** `/api/courses/:courseId/reviews/stats`
 
 Get review statistics for a course.
+
+**Access Level:** Public (no authentication required)
 
 **Response (200):**
 ```json
@@ -931,10 +989,12 @@ Get review statistics for a course.
 
 ---
 
-### Create Review
+### Create Review 👤 User
 **POST** `/api/courses/:courseId/reviews`
 
 Create a review for a course (must be enrolled).
+
+**Access Level:** Authenticated User (must be enrolled in course)
 
 **Headers:**
 ```
@@ -970,10 +1030,12 @@ Authorization: Bearer <access_token>
 
 ---
 
-### Update Review
+### Update Review 👤 User
 **PUT** `/api/courses/reviews/:reviewId`
 
 Update your own review.
+
+**Access Level:** Authenticated User (review owner only)
 
 **Headers:**
 ```
@@ -1009,10 +1071,12 @@ Authorization: Bearer <access_token>
 
 ---
 
-### Delete Review
+### Delete Review 👤 User
 **DELETE** `/api/courses/reviews/:reviewId`
 
 Delete your own review.
+
+**Access Level:** Authenticated User (review owner only)
 
 **Headers:**
 ```
@@ -1031,10 +1095,12 @@ Authorization: Bearer <access_token>
 
 ## Community
 
-### Get All Posts
+### Get All Posts 🌐 Public
 **GET** `/api/community/posts`
 
 Get all community posts with pagination.
+
+**Access Level:** Public (no authentication required)
 
 **Query Parameters:**
 - `limit` (optional, default: 20): Number of posts per page
@@ -1065,10 +1131,12 @@ Get all community posts with pagination.
 
 ---
 
-### Get Post by ID
+### Get Post by ID 🌐 Public
 **GET** `/api/community/posts/:id`
 
 Get a specific community post with comments.
+
+**Access Level:** Public (no authentication required)
 
 **Response (200):**
 ```json
@@ -1101,10 +1169,12 @@ Get a specific community post with comments.
 
 ---
 
-### Create Post
+### Create Post 👤 User
 **POST** `/api/community/posts`
 
-Create a new community post (requires authentication).
+Create a new community post.
+
+**Access Level:** Authenticated User
 
 **Headers:**
 ```
@@ -1139,10 +1209,12 @@ Content-Type: application/json
 
 ---
 
-### Like/Unlike Post
+### Like/Unlike Post 👤 User
 **POST** `/api/community/posts/:id/like`
 
-Toggle like on a post (requires authentication).
+Toggle like on a post.
+
+**Access Level:** Authenticated User
 
 **Headers:**
 ```
@@ -1166,10 +1238,12 @@ or
 
 ---
 
-### Add Comment
+### Add Comment 👤 User
 **POST** `/api/community/posts/:id/comments`
 
-Add a comment to a post (requires authentication).
+Add a comment to a post.
+
+**Access Level:** Authenticated User
 
 **Headers:**
 ```
@@ -1205,10 +1279,12 @@ Content-Type: application/json
 
 ## Payments
 
-### Create Payment Intent
+### Create Payment Intent 👤 User
 **POST** `/api/payments/create-intent`
 
-Create a Stripe payment intent (requires authentication).
+Create a Stripe payment intent.
+
+**Access Level:** Authenticated User
 
 **Headers:**
 ```
@@ -1236,19 +1312,23 @@ Content-Type: application/json
 
 ---
 
-### Webhook Handler
+### Webhook Handler ⚙️ System
 **POST** `/api/payments/webhook`
 
 Handle Stripe webhook events (used by Stripe, not for direct calls).
+
+**Access Level:** System (Stripe webhook only)
 
 ---
 
 ## Health Check
 
-### Health Check
+### Health Check 🌐 Public
 **GET** `/health`
 
 Check if the API is running.
+
+**Access Level:** Public (no authentication required)
 
 **Response (200):**
 ```json
