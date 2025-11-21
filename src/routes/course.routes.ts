@@ -10,7 +10,12 @@ const router = Router();
 router.get('/', courseController.getAllCourses);
 router.get('/:id', courseController.getCourseById);
 
-// Protected routes
+// Protected routes - Course Management
+router.post('/', authenticate, courseController.createCourse);
+router.put('/:id', authenticate, courseController.updateCourse);
+router.delete('/:id', authenticate, courseController.deleteCourse);
+
+// Protected routes - User Enrollment & Progress
 router.get('/:id/lessons', authenticate, courseController.getCourseLessons);
 router.post('/:id/enroll', authenticate, courseController.enrollInCourse);
 router.get('/my-courses', authenticate, courseController.getUserCourses);

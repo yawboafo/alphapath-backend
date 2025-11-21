@@ -127,6 +127,69 @@ export class CourseController {
 
     res.status(200).json(response);
   });
+
+  createCourse = asyncHandler(async (req: AuthRequest, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        error: { code: 'UNAUTHORIZED', message: 'Authentication required' },
+      });
+    }
+
+    const courseData = {
+      ...req.body,
+      instructorId: req.user.id,
+    };
+
+    const course = await courseService.createCourse(courseData);
+
+    const response: ApiResponse = {
+      success: true,
+      data: { course },
+      message: 'Course created successfully',
+    };
+
+    res.status(201).json(response);
+  });
+
+  updateCourse = asyncHandler(async (req: AuthRequest, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        error: { code: 'UNAUTHORIZED', message: 'Authentication required' },
+      });
+    }
+
+    const { id } = req.params;
+    const course = await courseService.updateCourse(id, req.body, req.user.id);
+
+    const response: ApiResponse = {
+      success: true,
+      data: { course },
+      message: 'Course updated successfully',
+    };
+
+    res.status(200).json(response);
+  });
+
+  deleteCourse = asyncHandler(async (req: AuthRequest, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        error: { code: 'UNAUTHORIZED', message: 'Authentication required' },
+      });
+    }
+
+    const { id } = req.params;
+    await courseService.deleteCourse(id, req.user.id);
+
+    const response: ApiResponse = {
+      success: true,
+      message: 'Course deleted successfully',
+    };
+
+    res.status(200).json(response);
+  });
 }
 
 export default new CourseController();

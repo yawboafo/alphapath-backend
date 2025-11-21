@@ -200,6 +200,123 @@ export class CourseService {
       [userId, lessonId, progressPercentage, isCompleted]
     );
   }
+
+  async createCourse(courseData: {
+    title: string;
+    description: string;
+    category: string;
+    thumbnailUrl?: string;
+    price?: number;
+    duration?: string;
+    instructorId: string;
+    isPublished?: boolean;
+  }): Promise<Course> {
+    const {
+      title,
+      description,
+      category,
+      thumbnailUrl,
+      price = 0,
+      duration,
+      instructorId,
+      isPublished = false,
+    } = courseData;
+
+    const { rows } = await db.query<Course>(
+      `INSERT INTO courses (title, description, category, thumbnail_url, price, duration, instructor_id, is_published)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       RETURNING id, title, description, category, thumbnail_url as "thumbnailUrl",
+                 video_count as "videoCount", instructor_id as "instructorId", price,
+                 is_published as "isPublished", rating, students_count as "studentsCount",
+                 duration, created_at as "createdAt", updated_at as "updatedAt"`,
+      [title, description, category, thumbnailUrl, price, duration, instructorId, isPublished]
+    );
+
+    return rows[0];
+  }
+
+  async updateCourse(
+    courseId: string,
+    updateData: {
+      title?: string;
+      description?: string;
+      category?: string;
+      thumbnailUrl?: string;
+      price?: number;
+      duration?: string;
+      isPublished?: boolean;
+    },
+    userId: string
+  ): Promise<Course> {
+    // Verify course exists and user is the instructor
+    const course = await this.getCourseById(courseId);
+    if (course.instructorId !== userId) {
+      throw new AppError('You are not authorized to update this course', 403, 'FORBIDDEN');
+    }
+
+    const fields: string[] = [];
+    const values: any[] = [];
+    let paramCount = 1;
+
+    if (updateData.title !== undefined) {
+      fields.push(`title = $${paramCount++}`);
+      values.push(updateData.title);
+    }
+    if (updateData.description !== undefined) {
+      fields.push(`description = $${paramCount++}`);
+      values.push(updateData.description);
+    }
+    if (updateData.category !== undefined) {
+      fields.push(`category = $${paramCount++}`);
+      values.push(updateData.category);
+    }
+    if (updateData.thumbnailUrl !== undefined) {
+      fields.push(`thumbnail_url = $${paramCount++}`);
+      values.push(updateData.thumbnailUrl);
+    }
+    if (updateData.price !== undefined) {
+      fields.push(`price = $${paramCount++}`);
+      values.push(updateData.price);
+    }
+    if (updateData.duration !== undefined) {
+      fields.push(`duration = $${paramCount++}`);
+      values.push(updateData.duration);
+    }
+    if (updateData.isPublished !== undefined) {
+      fields.push(`is_published = $${paramCount++}`);
+      values.push(updateData.isPublished);
+    }
+
+    fields.push(`updated_at = NOW()`);
+    values.push(courseId);
+
+    const { rows } = await db.query<Course>(
+      `UPDATE courses
+       SET ${fields.join(', ')}
+       WHERE id = $${paramCount}
+       RETURNING id, title, description, category, thumbnail_url as "thumbnailUrl",
+                 video_count as "videoCount", instructor_id as "instructorId", price,
+                 is_published as "isPublished", rating, students_count as "studentsCount",
+                 duration, created_at as "createdAt", updated_at as "updatedAt"`,
+      values
+    );
+
+    return rows[0];
+  }
+
+  async deleteCourse(courseId: string, userId: string): Promise<void> {
+    // Verify course exists and user is the instructor
+    const course = await this.getCourseById(courseId);
+    if (course.instructorId !== userId) {
+      throw new AppError('You are not authorized to delete this course', 403, 'FORBIDDEN');
+    }
+
+    // Delete related records first (cascading)
+    await db.query('DELETE FROM user_progress WHERE lesson_id IN (SELECT id FROM lessons WHERE course_id = $1)', [courseId]);
+    await db.query('DELETE FROM lessons WHERE course_id = $1', [courseId]);
+    await db.query('DELETE FROM enrollments WHERE course_id = $1', [courseId]);
+    await db.query('DELETE FROM courses WHERE id = $1', [courseId]);
+  }
 }
 
 export default new CourseService();
