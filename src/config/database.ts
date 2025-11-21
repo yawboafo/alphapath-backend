@@ -6,16 +6,26 @@ class Database {
   private pool: Pool;
 
   constructor() {
-    this.pool = new Pool({
-      host: config.database.host,
-      port: config.database.port,
-      database: config.database.name,
-      user: config.database.user,
-      password: config.database.password,
-      max: config.database.max,
-      idleTimeoutMillis: config.database.idleTimeoutMillis,
-      connectionTimeoutMillis: config.database.connectionTimeoutMillis,
-    });
+    // Use DATABASE_URL if available (for production), otherwise use individual config
+    const poolConfig = config.database.url
+      ? {
+          connectionString: config.database.url,
+          max: config.database.max,
+          idleTimeoutMillis: config.database.idleTimeoutMillis,
+          connectionTimeoutMillis: config.database.connectionTimeoutMillis,
+        }
+      : {
+          host: config.database.host,
+          port: config.database.port,
+          database: config.database.name,
+          user: config.database.user,
+          password: config.database.password,
+          max: config.database.max,
+          idleTimeoutMillis: config.database.idleTimeoutMillis,
+          connectionTimeoutMillis: config.database.connectionTimeoutMillis,
+        };
+    
+    this.pool = new Pool(poolConfig);
 
     // Test connection on initialization
     this.pool.on('connect', () => {
