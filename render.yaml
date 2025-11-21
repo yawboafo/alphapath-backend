@@ -3,16 +3,14 @@ services:
   - type: pserv
     name: alphapath-db
     plan: free
-    region: oregon
 
   # API Service
   - type: web
     name: alphapath-api
-    runtime: node
-    region: oregon
+    runtime: docker
     plan: free
     buildCommand: npm install && npm run build && npm run migrate
-    startCommand: npm run start
+    startCommand: npm start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
