@@ -4,7 +4,11 @@
 
 ## Table of Contents
 - [Authentication](#authentication)
+- [Users Management](#users-management)
+- [Dashboard Statistics](#dashboard-statistics)
 - [Courses](#courses)
+- [Course Sections](#course-sections)
+- [Reviews](#reviews)
 - [Community](#community)
 - [Payments](#payments)
 - [Health Check](#health-check)
@@ -132,6 +136,250 @@ Authorization: Bearer <accessToken>
       "createdAt": "2025-11-21T18:30:40.463Z"
     }
   }
+}
+```
+
+---
+
+## Users Management
+
+### Get All Users (Admin Only)
+**GET** `/api/users`
+
+Get paginated list of all users with optional search and filtering.
+
+**Headers:**
+```
+Authorization: Bearer <admin_access_token>
+```
+
+**Query Parameters:**
+- `page` (number, default: 1) - Page number
+- `limit` (number, default: 10) - Items per page
+- `search` (string, optional) - Search by name or email
+- `role` (string, optional) - Filter by membership tier
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "users": [
+      {
+        "id": "uuid",
+        "email": "user@example.com",
+        "fullName": "John Doe",
+        "avatarUrl": null,
+        "membershipTier": "free",
+        "createdAt": "2025-11-21T18:30:40.463Z",
+        "updatedAt": "2025-11-21T18:30:40.463Z"
+      }
+    ],
+    "total": 50,
+    "page": 1,
+    "totalPages": 5
+  }
+}
+```
+
+---
+
+### Get User by ID (Admin Only)
+**GET** `/api/users/:id`
+
+Get detailed information about a specific user.
+
+**Headers:**
+```
+Authorization: Bearer <admin_access_token>
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "uuid",
+    "email": "user@example.com",
+    "fullName": "John Doe",
+    "avatarUrl": null,
+    "membershipTier": "free",
+    "enrolledCourses": 5,
+    "completedCourses": 2,
+    "createdAt": "2025-11-21T18:30:40.463Z",
+    "updatedAt": "2025-11-21T18:30:40.463Z"
+  }
+}
+```
+
+---
+
+### Update User (Admin Only)
+**PUT** `/api/users/:id`
+
+Update user information.
+
+**Headers:**
+```
+Authorization: Bearer <admin_access_token>
+```
+
+**Request Body:**
+```json
+{
+  "fullName": "Jane Doe",
+  "avatarUrl": "https://example.com/avatar.jpg",
+  "membershipTier": "premium"
+}
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "User updated successfully",
+  "data": {
+    "id": "uuid",
+    "email": "user@example.com",
+    "fullName": "Jane Doe",
+    "avatarUrl": "https://example.com/avatar.jpg",
+    "membershipTier": "premium",
+    "createdAt": "2025-11-21T18:30:40.463Z",
+    "updatedAt": "2025-11-21T19:45:20.123Z"
+  }
+}
+```
+
+---
+
+### Delete User (Admin Only)
+**DELETE** `/api/users/:id`
+
+Delete a user account and all associated data.
+
+**Headers:**
+```
+Authorization: Bearer <admin_access_token>
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "User deleted successfully"
+}
+```
+
+---
+
+### Get User Statistics
+**GET** `/api/users/stats`
+
+Get statistics for the authenticated user.
+
+**Headers:**
+```
+Authorization: Bearer <access_token>
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "totalCourses": 5,
+    "completedCourses": 2,
+    "overallProgress": 45.5,
+    "totalLearningTime": "0 hours"
+  }
+}
+```
+
+---
+
+## Dashboard Statistics
+
+### Get Dashboard Overview (Admin Only)
+**GET** `/api/stats/dashboard`
+
+Get overview statistics for admin dashboard.
+
+**Headers:**
+```
+Authorization: Bearer <admin_access_token>
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "totalUsers": 150,
+    "totalCourses": 25,
+    "totalEnrollments": 450,
+    "activeUsers": 75,
+    "revenue": 12500.50
+  }
+}
+```
+
+---
+
+### Get Recent Enrollments (Admin Only)
+**GET** `/api/stats/recent-enrollments`
+
+Get recent course enrollments.
+
+**Headers:**
+```
+Authorization: Bearer <admin_access_token>
+```
+
+**Query Parameters:**
+- `limit` (number, default: 10) - Number of enrollments to return
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "userName": "John Doe",
+      "courseName": "Introduction to Alpha",
+      "enrolledAt": "2025-11-21T18:30:40.463Z"
+    }
+  ]
+}
+```
+
+---
+
+### Get Top Courses (Admin Only)
+**GET** `/api/stats/top-courses`
+
+Get top performing courses by enrollment count.
+
+**Headers:**
+```
+Authorization: Bearer <admin_access_token>
+```
+
+**Query Parameters:**
+- `limit` (number, default: 5) - Number of courses to return
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "title": "Introduction to Alpha",
+      "enrollmentCount": 125,
+      "completionRate": 68.5
+    }
+  ]
 }
 ```
 
@@ -491,6 +739,291 @@ Content-Type: application/json
 {
   "success": true,
   "message": "Progress updated successfully"
+}
+```
+
+---
+
+## Course Sections
+
+### Get Course Sections
+**GET** `/api/courses/:courseId/sections`
+
+Get all sections for a course.
+
+**Headers:**
+```
+Authorization: Bearer <access_token>
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "courseId": "uuid",
+      "title": "Getting Started",
+      "orderIndex": 1,
+      "createdAt": "2025-11-21T18:30:40.463Z",
+      "updatedAt": "2025-11-21T18:30:40.463Z"
+    }
+  ]
+}
+```
+
+---
+
+### Create Course Section
+**POST** `/api/courses/:courseId/sections`
+
+Create a new section (instructor only).
+
+**Headers:**
+```
+Authorization: Bearer <access_token>
+```
+
+**Request Body:**
+```json
+{
+  "title": "Advanced Topics",
+  "orderIndex": 2
+}
+```
+
+**Response (201):**
+```json
+{
+  "success": true,
+  "message": "Section created successfully",
+  "data": {
+    "id": "uuid",
+    "courseId": "uuid",
+    "title": "Advanced Topics",
+    "orderIndex": 2,
+    "createdAt": "2025-11-21T18:30:40.463Z",
+    "updatedAt": "2025-11-21T18:30:40.463Z"
+  }
+}
+```
+
+---
+
+### Update Course Section
+**PUT** `/api/sections/:sectionId`
+
+Update a section (instructor only).
+
+**Headers:**
+```
+Authorization: Bearer <access_token>
+```
+
+**Request Body:**
+```json
+{
+  "title": "Updated Section Title",
+  "orderIndex": 3
+}
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "Section updated successfully",
+  "data": {
+    "id": "uuid",
+    "courseId": "uuid",
+    "title": "Updated Section Title",
+    "orderIndex": 3,
+    "createdAt": "2025-11-21T18:30:40.463Z",
+    "updatedAt": "2025-11-21T19:45:20.123Z"
+  }
+}
+```
+
+---
+
+### Delete Course Section
+**DELETE** `/api/sections/:sectionId`
+
+Delete a section (instructor only).
+
+**Headers:**
+```
+Authorization: Bearer <access_token>
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "Section deleted successfully"
+}
+```
+
+---
+
+## Reviews
+
+### Get Course Reviews
+**GET** `/api/courses/:courseId/reviews`
+
+Get all reviews for a course with pagination.
+
+**Query Parameters:**
+- `page` (number, default: 1) - Page number
+- `limit` (number, default: 10) - Items per page
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "courseId": "uuid",
+      "userId": "uuid",
+      "userName": "John Doe",
+      "userAvatar": "https://example.com/avatar.jpg",
+      "rating": 4.5,
+      "comment": "Great course! Highly recommend.",
+      "createdAt": "2025-11-21T18:30:40.463Z",
+      "updatedAt": "2025-11-21T18:30:40.463Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 25,
+    "totalPages": 3
+  }
+}
+```
+
+---
+
+### Get Review Statistics
+**GET** `/api/courses/:courseId/reviews/stats`
+
+Get review statistics for a course.
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "averageRating": 4.3,
+    "totalReviews": 25,
+    "ratingDistribution": {
+      "5": 12,
+      "4": 8,
+      "3": 3,
+      "2": 1,
+      "1": 1
+    }
+  }
+}
+```
+
+---
+
+### Create Review
+**POST** `/api/courses/:courseId/reviews`
+
+Create a review for a course (must be enrolled).
+
+**Headers:**
+```
+Authorization: Bearer <access_token>
+```
+
+**Request Body:**
+```json
+{
+  "rating": 4.5,
+  "comment": "Great course! Highly recommend."
+}
+```
+
+**Response (201):**
+```json
+{
+  "success": true,
+  "message": "Review created successfully",
+  "data": {
+    "id": "uuid",
+    "courseId": "uuid",
+    "userId": "uuid",
+    "userName": "John Doe",
+    "userAvatar": "https://example.com/avatar.jpg",
+    "rating": 4.5,
+    "comment": "Great course! Highly recommend.",
+    "createdAt": "2025-11-21T18:30:40.463Z",
+    "updatedAt": "2025-11-21T18:30:40.463Z"
+  }
+}
+```
+
+---
+
+### Update Review
+**PUT** `/api/courses/reviews/:reviewId`
+
+Update your own review.
+
+**Headers:**
+```
+Authorization: Bearer <access_token>
+```
+
+**Request Body:**
+```json
+{
+  "rating": 5.0,
+  "comment": "Updated review comment."
+}
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "Review updated successfully",
+  "data": {
+    "id": "uuid",
+    "courseId": "uuid",
+    "userId": "uuid",
+    "userName": "John Doe",
+    "userAvatar": "https://example.com/avatar.jpg",
+    "rating": 5.0,
+    "comment": "Updated review comment.",
+    "createdAt": "2025-11-21T18:30:40.463Z",
+    "updatedAt": "2025-11-21T19:45:20.123Z"
+  }
+}
+```
+
+---
+
+### Delete Review
+**DELETE** `/api/courses/reviews/:reviewId`
+
+Delete your own review.
+
+**Headers:**
+```
+Authorization: Bearer <access_token>
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "Review deleted successfully"
 }
 ```
 

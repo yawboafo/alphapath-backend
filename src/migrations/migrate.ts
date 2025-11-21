@@ -247,7 +247,102 @@ const migrations = [
     `,
   },
   {
-    name: '014_create_migrations_table',
+    name: '014_create_course_sections_table',
+    sql: `
+      CREATE TABLE IF NOT EXISTS course_sections (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        course_id UUID NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+        title VARCHAR(255) NOT NULL,
+        order_index INTEGER NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      );
+      
+      CREATE INDEX idx_course_sections_course_id ON course_sections(course_id);
+      CREATE INDEX idx_course_sections_order ON course_sections(course_id, order_index);
+    `,
+  },
+  {
+    name: '015_add_section_to_lessons',
+    sql: `
+      ALTER TABLE lessons ADD COLUMN IF NOT EXISTS section_id UUID REFERENCES course_sections(id) ON DELETE SET NULL;
+      ALTER TABLE lessons ADD COLUMN IF NOT EXISTS is_locked BOOLEAN DEFAULT false;
+      
+      CREATE INDEX IF NOT EXISTS idx_lessons_section_id ON lessons(section_id);
+    `,
+  },
+  {
+    name: '016_create_enrollments_table',
+    sql: `
+      CREATE TABLE IF NOT EXISTS enrollments (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        course_id UUID NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+        enrolled_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        UNIQUE(user_id, course_id)
+      );
+      
+      CREATE INDEX idx_enrollments_user_id ON enrollments(user_id);
+      CREATE INDEX idx_enrollments_course_id ON enrollments(course_id);
+    `,
+  },
+  {
+    name: '017_create_payments_table',
+    sql: `
+      CREATE TABLE IF NOT EXISTS payments (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        course_id UUID REFERENCES courses(id) ON DELETE SET NULL,
+        amount DECIMAL(10, 2) NOT NULL,
+        currency VARCHAR(10) DEFAULT 'USD',
+        status VARCHAR(50) NOT NULL,
+        payment_method VARCHAR(50),
+        payment_provider VARCHAR(50),
+        stripe_payment_id VARCHAR(255),
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      );
+      
+      CREATE INDEX idx_payments_user_id ON payments(user_id);
+      CREATE INDEX idx_payments_course_id ON payments(course_id);
+      CREATE INDEX idx_payments_status ON payments(status);
+    `,
+  },
+  {
+    name: '018_create_community_comments_table',
+    sql: `
+      CREATE TABLE IF NOT EXISTS community_comments (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        post_id UUID NOT NULL REFERENCES community_posts(id) ON DELETE CASCADE,
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        content TEXT NOT NULL,
+        likes_count INTEGER DEFAULT 0,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      );
+      
+      CREATE INDEX idx_community_comments_post_id ON community_comments(post_id);
+      CREATE INDEX idx_community_comments_user_id ON community_comments(user_id);
+    `,
+  },
+  {
+    name: '019_create_resources_table',
+    sql: `
+      CREATE TABLE IF NOT EXISTS resources (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        course_id UUID NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+        title VARCHAR(255) NOT NULL,
+        file_url TEXT NOT NULL,
+        file_type VARCHAR(50),
+        file_size BIGINT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      );
+      
+      CREATE INDEX idx_resources_course_id ON resources(course_id);
+    `,
+  },
+  {
+    name: '020_create_migrations_table',
     sql: `
       CREATE TABLE IF NOT EXISTS migrations (
         id SERIAL PRIMARY KEY,
