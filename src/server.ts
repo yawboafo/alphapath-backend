@@ -43,11 +43,26 @@ class Server {
     // this.app.use('/api', apiLimiter);
 
     // Request logging
-    this.app.use((req, _res, next) => {
+    this.app.use((req, res, next) => {
+      const startTime = Date.now();
+      
       logger.info(`${req.method} ${req.path}`, {
         ip: req.ip,
         userAgent: req.get('user-agent'),
+        body: req.body,
       });
+
+      // Capture the original send function
+      const originalSend = res.send;
+      res.send = function(data: any): any {
+        const duration = Date.now() - startTime;
+        logger.info(`${req.method} ${req.path} - ${res.statusCode}`, {
+          duration: `${duration}ms`,
+          response: typeof data === 'string' ? JSON.parse(data) : data,
+        });
+        return originalSend.call(this, data);
+      };
+
       next();
     });
   }
