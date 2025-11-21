@@ -7,8 +7,8 @@ services:
     name: alphapath-api
     runtime: node
     plan: free
-    buildCommand: npm install && npm run build && npm run migrate
-    startCommand: npm start
+    buildCommand: npm install && npm run build
+    startCommand: npm run migrate && npm start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
