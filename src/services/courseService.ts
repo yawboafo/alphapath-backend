@@ -162,10 +162,10 @@ export class CourseService {
       [userId, lessons.map((l) => l.id)]
     );
 
-    const progressMap = new Map(progressRows.map((p) => [p.lessonId, p]));
+    const progressMap = new Map(progressRows.map((p: any) => [p.lessonId, p]));
 
     const totalLessons = lessons.length;
-    const completedLessons = progressRows.filter((p) => p.completed).length;
+    const completedLessons = progressRows.filter((p: any) => p.completed).length;
     const overallProgress = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
 
     return {

@@ -269,7 +269,7 @@ export async function runMigrations() {
     const { rows: executedMigrations } = await db.query<{ name: string }>(
       'SELECT name FROM migrations ORDER BY id'
     );
-    const executedNames = new Set(executedMigrations.map((m) => m.name));
+    const executedNames = new Set(executedMigrations.map((m: { name: string }) => m.name));
 
     // Run pending migrations
     for (const migration of migrations.slice(0, -1)) {
